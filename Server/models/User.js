@@ -15,10 +15,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     },
-lifeTests:{
-    type:[mongoose.Schema.Types.ObjectId],
-    ref:"LifeTest"
-}
+// lifeTests:{
+//     type:[mongoose.Schema.Types.ObjectId],
+//     ref:"LifeTest"
+// }
 });
 
 const User = mongoose.model('User', userSchema);
