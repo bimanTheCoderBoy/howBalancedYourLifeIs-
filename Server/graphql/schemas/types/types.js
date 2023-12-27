@@ -16,18 +16,20 @@ type Relation {
     family: Int
     friend: Int
   }
-    type User{
+ type User{
         id:ID!
         mail:String!
         name:String!
         lifeTests:[LifeTest]
       }
-    type LifeTest{
+  type LifeTest{
         id: ID!
         work: Work
         health: Health
         relation: Relation
         date: String
       }
-    }
+    
 `
+
+module.exports=types

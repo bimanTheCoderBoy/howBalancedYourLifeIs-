@@ -17,3 +17,5 @@ input RelationInput {
     friend: Int
 }
 `
+
+module.exports=inputs
