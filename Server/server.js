@@ -1,7 +1,8 @@
 const express=require("express")
 const cors=require("cors")
 const bodyParser=require("body-parser")
-
+const cookieParser=require("cookie-parser")
+const context=require("./utils/context")
 //graphql
 const {ApolloServer}=require("@apollo/server")
 const {expressMiddleware}=require("@apollo/server/express4")
@@ -21,25 +22,41 @@ dotenv.config()
 const runServer=async()=>{
     //dbconnect
     await dbConnect();
-
+    
     const app=express();
     //middleware
+    app.use(cors({
+        origin: 'http://localhost:8001/graphql/',
+        credentials: true,
+    }))
+    app.use(cookieParser())
     app.use(bodyParser.json())
-    app.use(cors())
+    
+ 
     const server=new ApolloServer({
        typeDefs:graphqlSchema,
-       resolvers:rootResolvers
+       resolvers:rootResolvers,
+       includeStacktraceInErrorResponses:false,
+       formatError:(error)=>{
+            paths=error.path.reduce((ele)=>ele+", ")
+            return{
+                message: error.message || "An internal error occurred",
+                code:error.extensions.code|| "INTERNAL_SERVER_ERROR",
+                paths
+            }
+       }
+
     })
 
     
 
-
     
-   
+
+
     await server.start()
-    app.use("/graphql",expressMiddleware(server))
-
-
+    app.use("/graphql",expressMiddleware(server,{context:context}))
+    
+    // console.log(check);
     //Listen Server
     const PORT = process.env.PORT || 5000;
     try {
@@ -56,3 +73,4 @@ const runServer=async()=>{
 
 
 runServer();
+

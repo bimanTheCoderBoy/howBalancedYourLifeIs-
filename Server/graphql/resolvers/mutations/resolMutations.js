@@ -1,35 +1,25 @@
-const User=require("../../../models/User")
-const LifeTest=require("../../../models/LifeTest")
+const UserService=require("../../../services/user/user")
+const LifeTestService = require("../../../services/lifeTest/lifeTest");
 
 const resolMutations={
 
 Mutation:{
 
-    createUser: async (_,{ name,password,mail }) => {
-        try {
-          console.log(name,password,mail);
-          const user = new User({name,mail,password });
-          await user.save();
-          return user;
-        } catch (error) {
-          console.error(error);
-          throw new Error('Error creating user');
-        }
+    createUser: async (_,payload,context) => {
+       try {
+        const { name,password,mail }=payload
+        console.log(payload);
+        const token= await UserService.createUser(payload,context);
+        return token;
+       } catch (error) {
+        throw new Error("Error creating user")
+       }
       },
 
 
       createLifeTest: async (_,{ userId, work, health, relation }) => {
         try {
-          const lifeTest = new LifeTest({
-            user: userId,
-            work,
-            health,
-            relation,
-           
-          });
-          const addToUserArray=User.updateOne({_id:userId},{$push:{lifeTests:lifeTest._id}})
-          await Promise.all([lifeTest.save(),addToUserArray])
-          
+          const lifeTest = await LifeTestService.createLifeTestByUserId(userId, work, health, relation)
           return lifeTest;
         } catch (error) {
           console.error(error);
