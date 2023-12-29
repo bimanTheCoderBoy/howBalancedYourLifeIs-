@@ -1,6 +1,6 @@
 const queries=`
    type Query{
-        getUser(id:ID!):User!
+        getUser:User!
         loginUser(mail:String!,password:String!):String
     }
 `

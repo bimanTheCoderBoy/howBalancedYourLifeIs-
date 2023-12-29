@@ -4,24 +4,28 @@ const UserService =require("../../../services/user/user")
 const LifeTestService=require("../../../services/lifeTest/lifeTest")
 const resolQueies={
 User:{
-    lifeTests:async(user)=>{
+    lifeTests:async(user,__,context)=>{
+      if(context.isValid){
     try {
-      const lifeTests=await LifeTestService.getLifeTestsByUserId(user.id)
+      const lifeTests=await LifeTestService.getLifeTestsByUserId(context.userId)
+      // console.log("kjhg");
       if(!lifeTests)
       throw new Error("life tests not found")
       return lifeTests
     } catch (error) {
       throw new Error("life tests not found")
     }
-    
+  }else{
+    throw new Error ('You are not authorized to do this action');
+  }
     },
   },
   
   Query:{
-    getUser:async(_,{id},context)=>{
+    getUser:async(_,__,context)=>{
       if(context.isValid){
       try {
-        const user =await UserService.getUser(id)
+        const user =await UserService.getUser(context.userId)
         if(!user){
           throw new Error ("User not found");
         }

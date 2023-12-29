@@ -6,21 +6,21 @@ class UserService{
    static async getUser(id){
         try {
           const user= await User.findById(id)
-          console.log(user);
+          // console.log(user);
           return user
         } catch (error) {
           console.error(error);
           throw new Error('Error getting user');
         }
    }
-   //create user
-   static async createUser(name,password,mail){
+   //create user[{}]
+   static async createUser({name,password,mail},context){
     try {
       const salt=10;
       let hashedPassword=await bcrypt.hash(`${password}`,salt);
         const user = new User({name,mail,password:hashedPassword});
         await user.save();
-       const token= await loginUser({mail,password}); //loging in also
+       const token= await UserService.loginUser({mail,password}); //loging in also
         return token;
       } catch (error) {
         throw new Error('Error creating user',error);
